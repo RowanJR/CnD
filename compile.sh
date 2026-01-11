@@ -1,0 +1,1 @@
+run gcc -o ex tiles.c dice.c map.c ability_system.c abilities.c entities.c test.c -lm

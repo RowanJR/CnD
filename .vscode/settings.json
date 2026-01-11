@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "map.h": "c",
+        "stdio.h": "c",
+        "stdlib.h": "c",
+        "cmath": "c",
+        "entities.h": "c",
+        "math.h": "c",
+        "ability_system.h": "c",
+        "basics.h": "c"
+    }
+}
