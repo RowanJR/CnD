@@ -6,24 +6,18 @@
 #include "ability_system.h"
 #include "dice.h"
 #include "tiles.h"
+#include "turns.h"
 
 int main()
 {
-    InitializeEventManager();
+    AddInitiative(4, NULL);
+    AddInitiative(16, NULL);
+    AddInitiative(12, NULL);
+    AddInitiative(3, NULL);
+    AddInitiative(28, NULL);
+    AddInitiative(14, NULL);
 
-    int* greg = malloc(sizeof(int));
-    int* breg = malloc(sizeof(int));
-
-    *greg = 1;
-    *breg = 2;
-
-    Subscribe(TURN_END, &greg);
-
-    DEBUG_PrintManager();
-
-    Unsubscribe(TURN_END, &greg);
-
-    //DEBUG_PrintManager();
+    DEBUG_printInitiative();
 
     return 0;
 }

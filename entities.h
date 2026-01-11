@@ -20,7 +20,7 @@ typedef enum{
     TYPES_NUMBER
 }Damage_Types;
 
-//uses first two letters for stats because of "int" and they're goo enough
+//uses first two letters for stats because of "int" and they're good enough
 typedef struct{
     int st;
     int de;

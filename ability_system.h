@@ -24,8 +24,6 @@ typedef enum{
     LIST
 }Datatype;
 
-
-
 //nodes for a linked list
 typedef struct node{
     char* name;         //name of the piece of data being passed; used for id/indexing, so multiple same instances will cause bugs
