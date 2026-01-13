@@ -110,3 +110,14 @@ void Heal(int healing, Entity* entity)
 
     return;
 }
+
+void NotifyAbilities(Entity* entity, Event event, node* info)
+{
+    int num = entity->abilities.count;
+    for(int i = 0; i < num; i++)
+    {
+        entity->abilities.list[i].abilfunction(info, event, &(entity->abilities.list[i]));
+    }
+
+    return;
+}

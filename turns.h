@@ -24,10 +24,13 @@ void DEBUG_printInitiative();
 //adds a creature to the initiative tracker
 //  initiative is the initiative + relevant modifiers
 //  creature is the entity who's initiative is being sent
-//      if a creature is already present in initiative order, the old initiative is removed and the new one is added
+//      if a creature is already present in initiative order, the old initiative is removed and the new one is added TODO: actually implement this
 void AddInitiative(int initiative, Entity* creature);
 
 //clears up everything important after ending initiative combat
 void EndInitiative();
+
+//progresses the initiative tracker forward
+void NextTurn();
 
 #endif // TURNS_H_

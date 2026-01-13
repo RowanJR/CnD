@@ -106,7 +106,7 @@ void FireEvent(Event event, node* info)
         manager.eventsubs[event].elems[i]->abilfunction(info, event, manager.eventsubs[event].elems[i]);
     }
 
-    //TODO implement functin I think?
+    //TODO implement function I think?
 }
 
 void* ListSearch(node* info, char* query)
@@ -179,8 +179,8 @@ void FreeList(node* start)
         {
             FreeList(current->value);
         }
-        //delete normal info (including any arrays or single values)
-        else
+        //delete normal info (including any arrays or single values) (don't deleting entities)
+        else if(current->type != ENTITY)
         {
             free(current->value);
         }

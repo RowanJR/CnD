@@ -35,6 +35,7 @@ void Debug_Burning(node* info, Event event, Ability* instance)
     {
         //in our initial case, we need to set how long the condition will last. 
         // We do not need to subscribe to anything, because TURN_START will be sent directly when it is the ability holder's turn
+        //  Ok, not actually sure about that, need to think on it more
         //TODO: we need a duplicate case for when a burning stack is already on an entity
         case INITIAL: 
             //our initial turns should be provided in the information passed to this function

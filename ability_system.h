@@ -21,7 +21,8 @@ typedef enum{
     UNKOWN,
     INT,
     STR,
-    LIST
+    LIST,
+    ENTITY
 }Datatype;
 
 //nodes for a linked list
@@ -71,6 +72,8 @@ void FireEvent(Event event, node* info);
 //searches an info linked list, provided as the first arguement, for a node with a string name passed as the second arguement, returns a pointer to the value
 void* ListSearch(node* info, char* query);
 
+//add a new node to a list. The list can be empty and doesn't need to be initialized to anything beyond a NULL node pointer
+//name can be a constant string
 //a little pointermancy is required;
 // we need the address of the start of the variable list, since it may be empty
 // we can use a constant string for the name. Spaces can be used.
