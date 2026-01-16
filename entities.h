@@ -147,6 +147,6 @@ void DealDamage(Damage_Types* damage, Entity* entity);
 
 //notifies all abilities on an entity with the given event
 // careful using, may notify lots of abilities that have no case for the given events (waste of processing/time)
-void NotifyAbilities(Entity* entity, Event event, node* info);
+void NotifyAllAbilities(Entity* entity, Event event, node* info);
 
 #endif // ENTITIES_H_

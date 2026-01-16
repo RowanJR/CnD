@@ -35,6 +35,7 @@ typedef struct node{
 
 struct Ability;
 
+// function pointer template that all abilities use
 typedef void (abilfunction)(node* info, Event event, struct Ability* instance);
 
 typedef struct Ability{

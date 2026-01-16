@@ -10,14 +10,17 @@
 
 int main()
 {
-    AddInitiative(4, NULL);
-    AddInitiative(16, NULL);
-    AddInitiative(12, NULL);
-    AddInitiative(3, NULL);
-    AddInitiative(28, NULL);
-    AddInitiative(14, NULL);
+    Ability ab;
 
-    DEBUG_printInitiative();
+    ab.variables = NULL;
+    ab.ability_holder = NULL;
+    ab.abilfunction = &DEBUG_Test;
+
+    ab.abilfunction(NULL, INITIAL, &ab);
+
+    FireEvent(TURN_START, NULL);
+
+    ab.abilfunction(NULL, REMOVE, &ab);
 
     return 0;
 }

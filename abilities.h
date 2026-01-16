@@ -4,6 +4,8 @@
 #include "entities.h"
 #include "ability_system.h"
 
+void DEBUG_Test(node* info, Event event, Ability* instance);
+
 //test burning function that deals 
 void Debug_Burning(node* info, Event event, Ability* instance);
 

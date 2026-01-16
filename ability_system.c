@@ -23,7 +23,7 @@ void DEBUG_PrintManager()
     }
 }
 
-//__attribute__((constructor))
+//__attribute__((constructor)) (look into this)
 void InitializeEventManager()
 {
     //set all starting event subscriber lists. each starts with 16 elements (arbitrary power of 2; very rare events probably won't show up more than that, common ones will)

@@ -27,6 +27,33 @@ void template(node* info, Event event, Ability* instance)
 }
 */
 
+//test function
+void DEBUG_Test(node* info, Event event, Ability* instance)
+{
+    switch(event)
+    {
+        case INITIAL:
+            printf("initializing ability\n");
+
+            Subscribe(TURN_START, instance);
+
+            break;
+        case TURN_START:
+
+            printf("turn start detected\n");
+
+            break;
+        case REMOVE:
+            printf("removing ability\n");
+
+            Unsubscribe(TURN_START, instance);
+
+            break;
+        default:
+            break;
+    }
+}
+
 //simple burning condition to demonstrate basic ability structures
 // extra comments to help as a kind of tutorial, typical abilities don't need so many
 void Debug_Burning(node* info, Event event, Ability* instance)

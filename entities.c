@@ -47,7 +47,8 @@ void AddAbility(void* abilfunctionptr, Entity* entity, node* info)
 
     entity->abilities.list[entity->abilities.count - 1] = newab;
 
-    FireEvent(INITIAL, info);
+    // trigger initial ability
+    newab.abilfunction(NULL, INITIAL, &newab);
     
     return;
 }
@@ -61,6 +62,9 @@ int RemoveAbility(void* abilfunctionptr, Entity* entity)
         if((long)(entity->abilities.list[i].abilfunction) == (long)abilfunctionptr)
         {
             total++;
+
+            // trigger remove ability
+            entity->abilities.list[i].abilfunction(NULL, REMOVE, &entity->abilities.list[i]);
 
             for(int j = i; j < entity->abilities.count; j++)
             {
@@ -111,7 +115,7 @@ void Heal(int healing, Entity* entity)
     return;
 }
 
-void NotifyAbilities(Entity* entity, Event event, node* info)
+void NotifyAllAbilities(Entity* entity, Event event, node* info)
 {
     int num = entity->abilities.count;
     for(int i = 0; i < num; i++)
