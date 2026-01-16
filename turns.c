@@ -152,7 +152,7 @@ void NextTurn()
 
     AddNode(&info, "target", initiative_track.current->creature, ENTITY);
     FireEvent(TURN_END, info);
-    NotifyAbilities(initiative_track.current->creature, TURN_END, info);
+    NotifyAllAbilities(initiative_track.current->creature, TURN_END, info);
     FreeList(info);
 
     initiative_track.current = initiative_track.current->next;
@@ -161,7 +161,7 @@ void NextTurn()
 
     AddNode(&info, "target", initiative_track.current->creature, ENTITY);
     FireEvent(TURN_START, info);
-    NotifyAbilities(initiative_track.current->creature, TURN_START, info);
+    NotifyAllAbilities(initiative_track.current->creature, TURN_START, info);
     FreeList(info);
 
     return;

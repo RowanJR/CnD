@@ -5,10 +5,17 @@
 // if an event is added here, any ability can use Subscribe(event, &self) to be notified when that even fires
 // unique events like USE don't have subscriber lists, but can be fired on a specific ability instance on a specific entity
 // all abilities are sent to the respective target's abilities (if they have one), even if they're not subscribed
+//TODO decide on actual information sent in each of these events. Ensure proper documentation and handling whenever sent. current documentation is placeholder
 typedef enum{
     TURN_START,     // contains a pointer to the entity whose turn is starting
     TURN_END,       // contains a pointer to the entity whose turn is ending
-    EV_COUNT,       // keep at end; a counter of how many events exist
+    SAVE,           // used whenever an entity attempts a saving throw; info contains the entity making the save, type of save, fail/success, advantage or disadvantage, and the outcomes if save is passed/failed
+    ATTACK,         // used for different attack types; info contains the attacker entity, the target entity, the potential outcome of a successful attack, and whether the attack is melee/ranged/magic
+    CHECK,          // used whenever an entity makes and ability check; info contains the entity making the check, The target of the ability check (if applicable), the check type (proficiency), and the check outcomes
+    MOVED,          // used for whenever an entity moves; info contains the entity moving
+    MAGIC_ACTION,
+    CHARACTERISTIC_CHANGE, 
+    EV_COUNT,       // keep at end of fired events; a counter of how many fired events exist
     USE,            // unique event, sent directly to the ability being used on the specific entity it's used on
     INITIAL,        // unique event, used when an ability is first added/created; instatiates uses/turns_remaining/etc. on an ability
     REMOVE,         // unique event, used when an ability instance is removed from an entity, cleans up any varaibles or statuses
@@ -83,5 +90,7 @@ void AddNode(node** start, char* name, void* value, Datatype type);
 
 //completely clear a linked-list of info
 void FreeList(node* start);
+
+void NotifyAbility(node* info, Event event, Ability* ability);
 
 #endif // ABILITY_SYSTEM_h_

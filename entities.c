@@ -48,7 +48,8 @@ void AddAbility(void* abilfunctionptr, Entity* entity, node* info)
     entity->abilities.list[entity->abilities.count - 1] = newab;
 
     // trigger initial ability
-    newab.abilfunction(NULL, INITIAL, &newab);
+    //newab.abilfunction(NULL, INITIAL, &newab);
+    NotifyAbility(NULL, INITIAL, &newab);
     
     return;
 }
@@ -64,7 +65,8 @@ int RemoveAbility(void* abilfunctionptr, Entity* entity)
             total++;
 
             // trigger remove ability
-            entity->abilities.list[i].abilfunction(NULL, REMOVE, &entity->abilities.list[i]);
+            //entity->abilities.list[i].abilfunction(NULL, REMOVE, &entity->abilities.list[i]);
+            NotifyAbility(NULL, REMOVE, &entity->abilities.list[i]);
 
             for(int j = i; j < entity->abilities.count; j++)
             {

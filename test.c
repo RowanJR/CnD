@@ -19,6 +19,8 @@ int main()
     ab.abilfunction(NULL, INITIAL, &ab);
 
     FireEvent(TURN_START, NULL);
+    FireEvent(TURN_START, NULL);
+    FireEvent(TURN_START, NULL);
 
     ab.abilfunction(NULL, REMOVE, &ab);
 

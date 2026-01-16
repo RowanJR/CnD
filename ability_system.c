@@ -197,3 +197,9 @@ void FreeList(node* start)
     return;
 }
 
+void NotifyAbility(node* info, Event event, Ability* ability)
+{
+    ability->abilfunction(info, event, ability);
+
+    return;
+}
