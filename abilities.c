@@ -61,10 +61,13 @@ void Debug_Burning(node* info, Event event, Ability* instance)
     switch(event)
     {
         //in our initial case, we need to set how long the condition will last. 
-        // We do not need to subscribe to anything, because TURN_START will be sent directly when it is the ability holder's turn
-        //  Ok, not actually sure about that, need to think on it more
         //TODO: we need a duplicate case for when a burning stack is already on an entity
         case INITIAL: 
+            //subscribe to TURN_START
+            Subscribe(TURN_START, instance);
+            //subscribe to TIMESTEP
+            Subscribe(TIMESTEP, instance);
+
             //our initial turns should be provided in the information passed to this function
             void* initial_turns = ListSearch(info, "initial_turns");
 
@@ -86,39 +89,48 @@ void Debug_Burning(node* info, Event event, Ability* instance)
             AddNode(&instance->variables, "turns_remaining", (void*)turns_remaining, INT);
 
             break;
+        //this is TURN_START outside of combat. Cautious when using this, because the info node contains nothing
+        case TIMESTEP:
         //in our turn start case, we want to do 1d4 fire damage and decrease the number of burning stacks by 1
         case TURN_START:  
-            //first: deal 1d4 fire damage
-            //find how much damage we do
-            int firedamage = Roll(4);
-
-            //when doing damage it needs to be passed an array of damages
-            Damage_Types* damage = malloc(sizeof(Damage_Types) * TYPES_NUMBER);
-            //access each damage type with its name as an index
-            damage[FIRE] = firedamage;
-
-            DealDamage(damage, instance->ability_holder);
-            //make sure to free a damage array after use!
-            free(damage);
-
-            //second: decrement turns_remaining
-
-            //find turns_remaining
-            turns_remaining = (int*)ListSearch(instance->variables, "turns_remaining");
-
-            //decrement the actual value in turns remaining
-            *turns_remaining -= 1;
-
-            //if we have no more stacks remaining, delete this ability
-            if(*turns_remaining <= 0)
+            //each turn, we need to check whose turn it is. If it's the entity holder's turn, we execute our start of turn code
+            if((ListSearch(info, "target") == instance->ability_holder) || event == TIMESTEP)
             {
-                //TODO: remove ability
-            }
+                //first: deal 1d4 fire damage
+                
+                //find how much damage we do
+                int firedamage = Roll(4);
 
+                //when doing damage it needs to be passed an array of damages
+                Damage_Types* damage = malloc(sizeof(Damage_Types) * TYPES_NUMBER);
+                //access each damage type with its name as an index
+                damage[FIRE] = firedamage;
+
+                DealDamage(damage, instance->ability_holder);
+                //make sure to free a damage array after use!
+                free(damage);
+
+                //second: decrement turns_remaining
+
+                //find turns_remaining
+                turns_remaining = (int*)ListSearch(instance->variables, "turns_remaining");
+
+                //decrement the actual value in turns remaining
+                *turns_remaining -= 1;
+
+                //if we have no more stacks remaining, delete this ability
+                if(*turns_remaining <= 0)
+                {
+                    //TODO: remove ability
+                }
+            }
             break;
-        //clean up all of our allocated information and 
+        //clean up all of our allocated information and resolve any potential bugs caused by an ability being removed
+        // always keep in mind, the ability being removed will be completely gone, so get rid of everything it allocates
         case REMOVE:
-            
+            Unsubscribe(TURN_START, instance);    
+            Unsubscribe(TIMESTEP, instance);   
+
             break;
         default:
             break;

@@ -159,7 +159,7 @@ void TranslateCrossChunks(Map* map, Chunk* originchunk, Chunk* targetchunk, Coor
     
 }
 
-//moves an entity in a direction according to the a vector.
+//moves an entity in a direction according to the given vector.
 // handles movement between chunks
 // move vector is the x, y vector from the starting position
 // collision is a boolean that determines if other entities or objects can stop the target's movement 
@@ -538,7 +538,7 @@ int CheckLineOfSight(Chunk* chunk, Coord start, Coord end)
 
 //returns an array of entities for each cell that a sphere overlaps within the current chunk. 
 // The first entity in the array is not a real entity; instead it's position's coord's x value is the length of the array.
-// ensure return value is freed imediately after use.
+// ensure return value is freed immediately after use.
 Entity_Position* CircleCollision(Chunk* chunk, Coord origin, float radius)
 {
     //loop over all entities in the chunk and see if they fall within the radius of the circle. it does not check line of sight

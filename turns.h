@@ -33,4 +33,6 @@ void EndInitiative();
 //progresses the initiative tracker forward
 void NextTurn();
 
+void TimeStep();
+
 #endif // TURNS_H_

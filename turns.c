@@ -148,21 +148,40 @@ void EndInitiative()
 
 void NextTurn()
 {
-    node* info = NULL;
+    node* info = NULL ;//TODO; this is placeholder, get the actual info
 
     AddNode(&info, "target", initiative_track.current->creature, ENTITY);
     FireEvent(TURN_END, info);
     NotifyAllAbilities(initiative_track.current->creature, TURN_END, info);
     FreeList(info);
 
-    initiative_track.current = initiative_track.current->next;
+    //if we get to the end of initiative, increment turn timer and start again at the top of initiative
+    if(initiative_track.current->next != NULL)
+    {
+        initiative_track.current = initiative_track.current->next;
+    }
+    else
+    {
+        worldtime++;
 
-    info = NULL;
+        initiative_track.current = initiative_track.start;
+    }
+
+    info = NULL; //TODO; placeholder continued
 
     AddNode(&info, "target", initiative_track.current->creature, ENTITY);
     FireEvent(TURN_START, info);
     NotifyAllAbilities(initiative_track.current->creature, TURN_START, info);
     FreeList(info);
+
+    return;
+}
+
+void TimeStep()
+{
+    worldtime++;
+
+    FireEvent(TIMESTEP, NULL);
 
     return;
 }

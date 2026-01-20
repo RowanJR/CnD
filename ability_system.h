@@ -7,14 +7,16 @@
 // all abilities are sent to the respective target's abilities (if they have one), even if they're not subscribed
 //TODO decide on actual information sent in each of these events. Ensure proper documentation and handling whenever sent. current documentation is placeholder
 typedef enum{
-    TURN_START,     // contains a pointer to the entity whose turn is starting
-    TURN_END,       // contains a pointer to the entity whose turn is ending
+    TIMESTEP,       // tracks each turn passing outside of combat. Info contains nothing, caution when using, meant to preserve turn-by-turn action while not invoking abilities that don't matter outside combat.
+    TURN_START,     // contains a pointer to the entity whose turn is starting; info contains the entity whose turn is starting
+    TURN_END,       // contains a pointer to the entity whose turn is ending; info contains the entity whose turn is ending
     SAVE,           // used whenever an entity attempts a saving throw; info contains the entity making the save, type of save, fail/success, advantage or disadvantage, and the outcomes if save is passed/failed
     ATTACK,         // used for different attack types; info contains the attacker entity, the target entity, the potential outcome of a successful attack, and whether the attack is melee/ranged/magic
     CHECK,          // used whenever an entity makes and ability check; info contains the entity making the check, The target of the ability check (if applicable), the check type (proficiency), and the check outcomes
     MOVED,          // used for whenever an entity moves; info contains the entity moving
-    MAGIC_ACTION,
-    CHARACTERISTIC_CHANGE, 
+    MAGIC_ACTION,   // used for any magical action; info contains the entity attempting the magic, and the outcome of action success
+    CHARACTERISTIC_CHANGE,  // used whenever an entity changes any characteristics; info contains the entity having it's characteristics changed, and a list of the characteristics changed (format is a linked list with the name being the characteristic (dexterity, size, ability, etc.) and the varaible being a pointer to the instance) TODO; this probably needs a better format
+    INITIATIVE,     // used whenever initiative is rolled
     EV_COUNT,       // keep at end of fired events; a counter of how many fired events exist
     USE,            // unique event, sent directly to the ability being used on the specific entity it's used on
     INITIAL,        // unique event, used when an ability is first added/created; instatiates uses/turns_remaining/etc. on an ability
