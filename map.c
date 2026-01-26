@@ -538,13 +538,13 @@ int CheckLineOfSight(Chunk* chunk, Coord start, Coord end)
 
 //returns an array of entities for each cell that a sphere overlaps within the current chunk. 
 // The first entity in the array is not a real entity; instead it's position's coord's x value is the length of the array.
-// ensure return value is freed immediately after use.
+//  ensure return value is freed imediately after use.
 Entity_Position* CircleCollision(Chunk* chunk, Coord origin, float radius)
 {
     //loop over all entities in the chunk and see if they fall within the radius of the circle. it does not check line of sight
     for(int i = 0; i < chunk->numentities; i++)
     {
-
+        
     }
 }
 

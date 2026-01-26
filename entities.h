@@ -94,6 +94,7 @@ typedef struct{
     int d10;
     int d12;
     int d20;
+    int d100;
 }Dice;
 
 typedef struct{
@@ -144,6 +145,9 @@ int RemoveAbility(void* abilfunctionptr, Entity* entity);
 
 //needs to be passed an array of damages
 void DealDamage(Damage_Types* damage, Entity* entity);
+
+//heal an entity
+void Heal(int healing, Entity* entity);
 
 //notifies all abilities on an entity with the given event
 // careful using, may notify lots of abilities that have no case for the given events (waste of processing/time)

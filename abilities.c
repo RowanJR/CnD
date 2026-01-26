@@ -94,7 +94,7 @@ void Debug_Burning(node* info, Event event, Ability* instance)
         //in our turn start case, we want to do 1d4 fire damage and decrease the number of burning stacks by 1
         case TURN_START:  
             //each turn, we need to check whose turn it is. If it's the entity holder's turn, we execute our start of turn code
-            if((ListSearch(info, "target") == instance->ability_holder) || event == TIMESTEP)
+            if(event == TIMESTEP || (ListSearch(info, "target") == instance->ability_holder))
             {
                 //first: deal 1d4 fire damage
                 
