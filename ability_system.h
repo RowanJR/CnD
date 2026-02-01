@@ -21,7 +21,8 @@ typedef enum{
     USE,            // unique event, sent directly to the ability being used on the specific entity it's used on
     INITIAL,        // unique event, used when an ability is first added/created; instatiates uses/turns_remaining/etc. on an ability
     REMOVE,         // unique event, used when an ability instance is removed from an entity, cleans up any varaibles or statuses
-    GET_DATA,       // unique event used to retrieve the name and formatting of an ability instance from the ability function (which is constant and generic)
+    GET_DATA,       // unique event used to retrieve the name and formatting of an ability instance from the ability function (which is constant and generic); info must contain "dest", which is the destination for the requested data
+    GET_TAGS,       // unique event used to retrieve any tags associated with an ability/status (charmed, paralyzed, DEBUG, etc.)
     EV_TOTAL        // total number of events, including unqiue ones
 }Event;
 
@@ -29,9 +30,10 @@ typedef enum{
 typedef enum{
     UNKOWN,
     INT,
+    PTR,
     STR,
-    LIST,
-    ENTITY
+    FLOAT,
+    LIST
 }Datatype;
 
 //nodes for a linked list
@@ -69,6 +71,9 @@ void DEBUG_PrintManager();
 //initializes the event manager
 void InitializeEventManager();
 
+//closes event manager
+void CloseEventManager();
+
 //adds a subscriber to a list; uses an array which doubles in length when it runs out of space
 void Subscribe(Event event, void* ability);
 
@@ -94,5 +99,7 @@ void AddNode(node** start, char* name, void* value, Datatype type);
 void FreeList(node* start);
 
 void NotifyAbility(node* info, Event event, Ability* ability);
+
+void DEBUG_PrintList(node* start);
 
 #endif // ABILITY_SYSTEM_h_

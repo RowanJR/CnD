@@ -30,40 +30,6 @@ typedef struct{
     int ch;
 }Stats;
 
-//tracks proficiencies. 1 has proficiency, 2 has expertise
-typedef struct{
-    short int strength;
-    short int dexterity;
-    short int constitution;
-    short int intelligence;
-    short int wisdom;
-    short int charisma;
-
-    short int acrobatics;
-    short int animal_handling;
-    short int arcana;
-    short int deception;
-    short int history;
-    short int insight;
-    short int intimidation;
-    short int investigation;
-    short int medicine;
-    short int nature;
-    short int perception;
-    short int performance;
-    short int persuasion;
-    short int religion;
-    short int sleight_of_hand;
-    short int stealth;
-    short int survival;
-
-    short int simple_weapons;
-    short int martial_weapons;
-    short int light_armor;
-    short int medium_armor;
-    short int heavy_armor;
-}Skills;
-
 //range in squares (feet/5) of each sense of a creature
 typedef struct{
     float vision;
@@ -98,7 +64,7 @@ typedef struct{
 }Dice;
 
 typedef struct{
-    char **name;
+    char *name;
 
     //a boolean that determines whether an entity takes up its space or can exist with other things in its space, like an item
     short int takes_space;
@@ -109,7 +75,6 @@ typedef struct{
     int type;
 
     Stats stats;
-    Skills skills;
     Damage_Types resistances[TYPES_NUMBER];
     Senses senses;
 
@@ -122,7 +87,7 @@ typedef struct{
     float CR;
     short int prof;
 
-    //movement speeds, in squares (feet/5)
+    //max movement speeds, in squares (feet/5)
     float walk;
     float fly;
     float swim;

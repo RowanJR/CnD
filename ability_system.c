@@ -35,6 +35,14 @@ void InitializeEventManager()
     }
 }
 
+void CloseEventManager()
+{
+    for(int i = 0; i < EV_COUNT; i++)
+    {
+        free(manager.eventsubs[i].elems);
+    }
+}
+
 void Subscribe(Event event, void* ability)
 {
     manager.eventsubs[event].count++;
@@ -130,17 +138,36 @@ void* ListSearch(node* info, char* query)
 }
 
 //TODO fix this god awful datatype system and find something more user friendly to free a node with a linked list as data
+//TODO also test for memory leaks with valgrind
 void AddNode(node** start, char* name, void* value, Datatype type)
 {
     node* newnode = malloc(sizeof(node));
 
-    newnode->name = malloc(sizeof(char) * strlen(name));
-    strcpy(name, newnode->name);
+    newnode->type = type;
 
-    newnode->value = value;
+    int nameleng = strlen(name);
+    
+    newnode->name = malloc(sizeof(char) * (nameleng + 1));
 
+    strncpy(newnode->name, name, nameleng);
+    
+    newnode->name[nameleng] = '\0';
+    
+    //allows passing of string literal as value when adding a node
+    if(type == STR)
+    {
+        int valleng = strlen(value);
+        newnode->value = malloc(sizeof(char) * (valleng + 1));
+        strncpy(newnode->value, value, valleng);
+        char* temp = (char *)newnode->value;
+        temp[valleng] = '\0';
+    }
+    else
+    {
+        newnode->value = value;
+    }
+    
     newnode->next = NULL;
-
     node* cur = *start;
 
     //empty list case
@@ -150,17 +177,12 @@ void AddNode(node** start, char* name, void* value, Datatype type)
         return;
     }
 
-    while(1)
+    while(cur->next != NULL)
     {
-        if(cur->next == NULL)
-        {
-            break;
-        }
+        cur = cur->next;
     }
     
     cur->next = newnode;
-
-    cur->type = type;
 
     return;
 }
@@ -179,12 +201,8 @@ void FreeList(node* start)
         {
             FreeList(current->value);
         }
-        //delete normal info (including any arrays or single values) (don't deleting entities)
-        else if(current->type != ENTITY)
-        {
-            free(current->value);
-        }
-
+        //delete normal info (including any arrays or single values)
+        free(current->value);
         next = current->next;
 
         free(current);
@@ -192,8 +210,6 @@ void FreeList(node* start)
         current = next;
     }
     
-    free(start->next);
-
     return;
 }
 
@@ -202,4 +218,26 @@ void NotifyAbility(node* info, Event event, Ability* ability)
     ability->abilfunction(info, event, ability);
 
     return;
+}
+
+void DEBUG_PrintList(node* start)
+{
+    printf("list print: \n");
+    node* current = start;
+
+    while(current != NULL)
+    {
+        printf("node name: %s\n", current->name);
+
+        if(current->type == STR)
+        {
+            printf("\t string variable: %s\n", current->value);
+        }
+        else if(current->type == INT)
+        {
+            printf("\t int variable: %d\n", current->value);
+        }
+
+        current = current->next;
+    }
 }

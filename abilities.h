@@ -6,7 +6,7 @@
 
 void DEBUG_Test(node* info, Event event, Ability* instance);
 
-//test burning function that deals 
+//test burning function
 void Debug_Burning(node* info, Event event, Ability* instance);
 
 #endif // ABILITIES_H_

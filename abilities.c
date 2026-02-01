@@ -21,6 +21,20 @@ void template(node* info, Event event, Ability* instance)
         case REMOVE:
 
             break;
+        case GET_DATA:
+            node** destination = (node**)ListSearch(info, "dest");
+            if(destination != NULL)
+            {
+                AddNode(destination, "name", value, DATATYPE);
+            }
+            break;
+        case GET_TAGS:
+            //node** destination = (node**)ListSearch(info, "dest");
+            if(destination != NULL)
+            {
+                AddNode(destination, "tag", "true", STR);
+            }
+            break;
         default:
             break;
     }
@@ -48,6 +62,23 @@ void DEBUG_Test(node* info, Event event, Ability* instance)
 
             Unsubscribe(TURN_START, instance);
 
+            FreeList(instance->variables);
+
+            break;
+        case GET_DATA:
+            node*** destination = (node***)ListSearch(info, "dest");
+            if(destination != NULL)
+            {
+                AddNode(*destination, "name", "DEBUG_test", STR);
+                AddNode(*destination, "description", "DEBUG_test description", STR);
+            }
+            break;
+        case GET_TAGS:
+            //void* destination = ListSearch(info, "dest");
+            if(destination != NULL)
+            {
+                AddNode(*destination, "DEBUG", "true", STR);
+            }
             break;
         default:
             break;
@@ -131,6 +162,34 @@ void Debug_Burning(node* info, Event event, Ability* instance)
             Unsubscribe(TURN_START, instance);    
             Unsubscribe(TIMESTEP, instance);   
 
+            break;
+        //simple pattern that allows simple, human readable code
+        // a desitnation must be supplied and freed after use when calling GET_DATA
+        // the string "true" is used for any boolean. Memory allocated for this shouldn't persist at all after initial use, and ListSearch() needs something to return
+        // do not use any caps unless its a description or Debug/DEBUG
+        case GET_DATA:
+            node** destination = (node**)ListSearch(info, "dest");
+            if(destination != NULL)
+            {
+                AddNode(destination, "name", "Debug_burning", STR);
+                AddNode(destination, "description", "Debug burning debuff", STR);
+                AddNode(destination, "is_usable", "true", STR);
+                AddNode(destination, "is_usable", "true", STR);
+                AddNode(destination, "use_description", "Use an action to remove burning.", STR);
+            }
+            break;
+        //similar to GET_DATA, though all tags are booleans
+        // no need for any "false" booleans, ListSeach returning NULL is equivalent to false
+        // do not use any caps unless its a Debug/DEBUG
+        case GET_TAGS:
+            //void* destination = ListSearch(info, "dest");
+            if(destination != NULL)
+            {
+                AddNode(destination, "DEBUG", "true", STR);
+                AddNode(destination, "burning", "true", STR);
+                AddNode(destination, "status", "true", STR);
+                AddNode(destination, "harmful", "true", STR);
+            }
             break;
         default:
             break;

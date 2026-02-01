@@ -10,6 +10,7 @@
 
 int main()
 {
+    InitializeEventManager();
     Ability ab;
 
     ab.variables = NULL;
@@ -19,10 +20,24 @@ int main()
     ab.abilfunction(NULL, INITIAL, &ab);
 
     FireEvent(TURN_START, NULL);
-    FireEvent(TURN_START, NULL);
-    FireEvent(TURN_START, NULL);
+
+    node *info = NULL;
+    node *data = NULL; 
+
+    node*** datapointer = malloc(sizeof(node**));
+    *datapointer = &data;
+
+    AddNode(&info, "dest", datapointer, PTR);
+    ab.abilfunction(info, GET_DATA, &ab);
+  
+    DEBUG_PrintList(data);
+
+    FreeList(data);
+    FreeList(info);
 
     ab.abilfunction(NULL, REMOVE, &ab);
+
+    CloseEventManager();
 
     return 0;
 }

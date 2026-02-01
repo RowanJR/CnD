@@ -150,9 +150,11 @@ void NextTurn()
 {
     node* info = NULL ;//TODO; this is placeholder, get the actual info
 
-    AddNode(&info, "target", initiative_track.current->creature, ENTITY);
+    Entity** creaturepointer = malloc(sizeof(Entity**));
+    creaturepointer = &initiative_track.current->creature;
+
+    AddNode(&info, "target", creaturepointer, INT);
     FireEvent(TURN_END, info);
-    NotifyAllAbilities(initiative_track.current->creature, TURN_END, info);
     FreeList(info);
 
     //if we get to the end of initiative, increment turn timer and start again at the top of initiative
@@ -169,9 +171,9 @@ void NextTurn()
 
     info = NULL; //TODO; placeholder continued
 
-    AddNode(&info, "target", initiative_track.current->creature, ENTITY);
+    creaturepointer = &initiative_track.current->creature;
+    AddNode(&info, "target", creaturepointer, INT);
     FireEvent(TURN_START, info);
-    NotifyAllAbilities(initiative_track.current->creature, TURN_START, info);
     FreeList(info);
 
     return;
