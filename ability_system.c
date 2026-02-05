@@ -63,7 +63,7 @@ void Subscribe(Event event, void* ability)
     }
 
     //add the new element
-    manager.eventsubs[event].elems[manager.eventsubs[event].count - 1] = ability;
+    manager.eventsubs[event].elems[manager.eventsubs[event].count - 1] = (Ability*)ability;
 
     return;
 }
@@ -110,7 +110,6 @@ void FireEvent(Event event, node* info)
 
     for(int i = 0; i < cont; i++)
     {
-        //TODO test this, I think I'm calling the function pointer wrong
         manager.eventsubs[event].elems[i]->abilfunction(info, event, manager.eventsubs[event].elems[i]);
     }
 

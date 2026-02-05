@@ -11,6 +11,7 @@
 int main()
 {
     InitializeEventManager();
+    /*
     Ability ab;
 
     ab.variables = NULL;
@@ -28,14 +29,39 @@ int main()
     *datapointer = &data;
 
     AddNode(&info, "dest", datapointer, PTR);
-    ab.abilfunction(info, GET_DATA, &ab);
+    ab.abilfunction(info, GET_TAGS, &ab);
   
     DEBUG_PrintList(data);
 
     FreeList(data);
     FreeList(info);
 
-    ab.abilfunction(NULL, REMOVE, &ab);
+    ab.abilfunction(NULL, REMOVE, &ab);*/
+
+    Entity* johnny;
+
+    johnny = DEBUG_SimpleEntity();
+
+    AddAbility(&DEBUG_Test, johnny, NULL);
+
+    FireEvent(TURN_START, NULL);
+
+    node *info = NULL;
+    node *data = NULL; 
+
+    node*** datapointer = malloc(sizeof(node**));
+    *datapointer = &data;
+
+    AddNode(&info, "dest", datapointer, PTR);
+
+    NotifyAllAbilities(johnny, GET_TAGS, info);
+
+    DEBUG_PrintList(data);
+
+    FreeList(data);
+    FreeList(info);
+
+    RemoveAbility(&DEBUG_Test, johnny);
 
     CloseEventManager();
 

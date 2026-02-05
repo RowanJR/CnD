@@ -4,6 +4,15 @@
 #include "ability_system.h"
 #include "entities.h"
 
+Entity* DEBUG_SimpleEntity()
+{
+    Entity* fin = malloc(sizeof(Entity));
+
+    fin->abilities.count = 0;
+    fin->abilities.length = 16;
+    fin->abilities.list = malloc(sizeof(Ability)*16);
+}
+
 int GetModifier(int value)
 {
     int mod = 0;
@@ -22,6 +31,7 @@ int GetModifier(int value)
 
 void AddAbility(void* abilfunctionptr, Entity* entity, node* info)
 {
+
     entity->abilities.count++;
 
     if(entity->abilities.count > entity->abilities.length)
@@ -30,13 +40,16 @@ void AddAbility(void* abilfunctionptr, Entity* entity, node* info)
 
         for(int i = 0; i < entity->abilities.count; i++)
         {
-            newarr[i] = entity->abilities.list[i];
+            newarr[i].ability_holder = entity->abilities.list[i].ability_holder;
+            newarr[i].variables = entity->abilities.list[i].variables;
+            newarr[i].abilfunction = entity->abilities.list[i].abilfunction;
         }
 
         free(entity->abilities.list);
         entity->abilities.list = newarr;
         entity->abilities.length *= 2;
     }
+
 
     //ISSUE this might not persist after this funciton ends, ensure abilities still remain
     Ability newab;
@@ -48,8 +61,7 @@ void AddAbility(void* abilfunctionptr, Entity* entity, node* info)
     entity->abilities.list[entity->abilities.count - 1] = newab;
 
     // trigger initial ability
-    //newab.abilfunction(NULL, INITIAL, &newab);
-    NotifyAbility(NULL, INITIAL, &newab);
+    NotifyAbility(NULL, INITIAL, &(entity->abilities.list[entity->abilities.count - 1]));
     
     return;
 }
@@ -124,6 +136,18 @@ void NotifyAllAbilities(Entity* entity, Event event, node* info)
     {
         entity->abilities.list[i].abilfunction(info, event, &(entity->abilities.list[i]));
     }
+
+    return;
+}
+
+void FreeEntity(Entity* entity)
+{
+    free(entity->name);
+    free(entity->abilities.list);
+
+    //TODO free inventory (not yet imlemented)
+
+    free(entity);
 
     return;
 }

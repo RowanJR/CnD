@@ -2,6 +2,7 @@
 #define ENTITIES_H_
 
 #include "ability_system.h"
+//#include "map.h"
 
 typedef enum{
     SLASHING,
@@ -20,6 +21,32 @@ typedef enum{
     TYPES_NUMBER
 }Damage_Types;
 
+typedef enum{
+    ABBERATION,
+    BEAST,
+    CELESTIAL,
+    CONSTRUCTS,
+    DRAGON,
+    ELEMENTALS,
+    FEY,
+    FIEND,
+    GIANT,
+    HUMANOID,
+    MONSTROSITY,
+    OOZE,
+    PLANT,
+    UNDEAD
+}Creature_Type;
+
+typedef enum{
+    TINY,
+    SMALL,
+    MEDIUM,
+    LARGE,
+    HUGE,
+    GARGANTUAN
+}Size;
+
 //uses first two letters for stats because of "int" and they're good enough
 typedef struct{
     int st;
@@ -35,6 +62,7 @@ typedef struct{
     float vision;
     float darkvision;
     float blindsight;
+    float truesight;
 
     float hearing;
     float smell;
@@ -48,6 +76,7 @@ typedef struct{
 }Ability_Manager;
 
 //tracks the items someone has on their person
+// TODO implement inventory
 typedef struct{
     
 }Inventory;
@@ -65,14 +94,16 @@ typedef struct{
 
 typedef struct{
     char *name;
+    char *species;
+
+    Creature_Type type;
+    Size size;
 
     //a boolean that determines whether an entity takes up its space or can exist with other things in its space, like an item
-    short int takes_space;
+    short int occupies_space;
     //a boolean that determines whether an entity acts during initiative or can't, like a tree 
     short int initiative;
 
-    int size;
-    int type;
 
     Stats stats;
     Damage_Types resistances[TYPES_NUMBER];
@@ -85,7 +116,7 @@ typedef struct{
     int maxHP;
     int currentHP;
     float CR;
-    short int prof;
+    short int proficiency;
 
     //max movement speeds, in squares (feet/5)
     float walk;
@@ -98,7 +129,11 @@ typedef struct{
     Inventory inventory;
 
     Ability_Manager abilities;
+
+    //Chunk* currentchunk;
 }Entity;
+
+Entity* DEBUG_SimpleEntity();
 
 int GetModifier(int value);
 
@@ -117,5 +152,7 @@ void Heal(int healing, Entity* entity);
 //notifies all abilities on an entity with the given event
 // careful using, may notify lots of abilities that have no case for the given events (waste of processing/time)
 void NotifyAllAbilities(Entity* entity, Event event, node* info);
+
+void FreeEntity(Entity* entity);
 
 #endif // ENTITIES_H_

@@ -29,7 +29,7 @@ void template(node* info, Event event, Ability* instance)
             }
             break;
         case GET_TAGS:
-            //node** destination = (node**)ListSearch(info, "dest");
+            destination = (node**)ListSearch(info, "dest");
             if(destination != NULL)
             {
                 AddNode(destination, "tag", "true", STR);
@@ -74,7 +74,7 @@ void DEBUG_Test(node* info, Event event, Ability* instance)
             }
             break;
         case GET_TAGS:
-            //void* destination = ListSearch(info, "dest");
+            destination = (node***)ListSearch(info, "dest");
             if(destination != NULL)
             {
                 AddNode(*destination, "DEBUG", "true", STR);
@@ -182,7 +182,7 @@ void Debug_Burning(node* info, Event event, Ability* instance)
         // no need for any "false" booleans, ListSeach returning NULL is equivalent to false
         // do not use any caps unless its a Debug/DEBUG
         case GET_TAGS:
-            //void* destination = ListSearch(info, "dest");
+            destination = ListSearch(info, "dest");
             if(destination != NULL)
             {
                 AddNode(destination, "DEBUG", "true", STR);

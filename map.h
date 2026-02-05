@@ -77,4 +77,5 @@ int CheckLineOfSight(Chunk* chunk, Coord start, Coord end);
 
 Entity_Position* CircleCollision(Chunk* chunk, Coord origin, float radius);
 
+
 #endif

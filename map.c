@@ -119,6 +119,8 @@ Coord IndexToCoord(int ind)
 //the map currently loads the entire map when called, which shouldn't be done; we should initialize all we need, like the map size, and only load the chunks by the player's position, with all other chunk pointers as "NULL"
 // current implementation is for debugging
 // TODO: fix above issue
+//TODO absolutely change this method; we can't store an array of all chunks in a map (~2800 pointers *per square mile*)
+// currently thinking different chunk version
 Map* InitializeMap(int height, int width, int seed)
 {
     int length = height * width;
@@ -547,4 +549,5 @@ Entity_Position* CircleCollision(Chunk* chunk, Coord origin, float radius)
         
     }
 }
+
 
