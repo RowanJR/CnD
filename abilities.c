@@ -18,6 +18,9 @@ void template(node* info, Event event, Ability* instance)
         case INITIAL:
 
             break;
+        case REPEAT:
+
+            break
         case REMOVE:
 
             break;
@@ -92,7 +95,6 @@ void Debug_Burning(node* info, Event event, Ability* instance)
     switch(event)
     {
         //in our initial case, we need to set how long the condition will last. 
-        //TODO: we need a duplicate case for when a burning stack is already on an entity
         case INITIAL: 
             //subscribe to TURN_START
             Subscribe(TURN_START, instance);
@@ -120,6 +122,10 @@ void Debug_Burning(node* info, Event event, Ability* instance)
             AddNode(&instance->variables, "turns_remaining", (void*)turns_remaining, INT);
 
             break;
+        //this is what our program does if it tries to add an ability that already exists on an entity
+        case REPEAT:
+            
+            break;
         //this is TURN_START outside of combat. Cautious when using this, because the info node contains nothing
         case TIMESTEP:
         //in our turn start case, we want to do 1d4 fire damage and decrease the number of burning stacks by 1
@@ -134,6 +140,12 @@ void Debug_Burning(node* info, Event event, Ability* instance)
 
                 //when doing damage it needs to be passed an array of damages
                 Damage_Types* damage = malloc(sizeof(Damage_Types) * TYPES_NUMBER);
+
+                for(int i = 0; i < TYPES_NUMBER; i++)
+                {
+                    damage[i] = 0;
+                }
+
                 //access each damage type with its name as an index
                 damage[FIRE] = firedamage;
 
@@ -160,12 +172,16 @@ void Debug_Burning(node* info, Event event, Ability* instance)
         // always keep in mind, the ability being removed will be completely gone, so get rid of everything it allocates
         case REMOVE:
             Unsubscribe(TURN_START, instance);    
-            Unsubscribe(TIMESTEP, instance);   
+            Unsubscribe(TIMESTEP, instance);
+
+            FreeList(instance->variables);
+            free(instance);
 
             break;
-        //simple pattern that allows simple, human readable code
+        //basic pattern that allows simple, human readable code
         // a desitnation must be supplied and freed after use when calling GET_DATA
-        // the string "true" is used for any boolean. Memory allocated for this shouldn't persist at all after initial use, and ListSearch() needs something to return
+        // the string "true" is used for any boolean 
+        //  Memory allocated for this shouldn't persist at all after initial use, and ListSearch() needs something to return
         // do not use any caps unless its a description or Debug/DEBUG
         case GET_DATA:
             node** destination = (node**)ListSearch(info, "dest");

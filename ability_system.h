@@ -15,7 +15,9 @@ typedef enum{
     CHECK,          // used whenever an entity makes and ability check; info contains the entity making the check, The target of the ability check (if applicable), the check type (proficiency), and the check outcomes
     MOVED,          // used for whenever an entity moves; info contains the entity moving
     MAGIC_ACTION,   // used for any magical action; info contains the entity attempting the magic, and the outcome of action success
-    CHARACTERISTIC_CHANGE,  // used whenever an entity changes any characteristics; info contains the entity having it's characteristics changed, and a list of the characteristics changed (format is a linked list with the name being the characteristic (dexterity, size, ability, etc.) and the varaible being a pointer to the instance) TODO; this probably needs a better format
+    CHARACTERISTIC_CHANGE,  // used whenever an entity changes any characteristics; info contains the entity having it's characteristics changed, 
+                            //and a list of the characteristics changed (format is a linked list with the name being the characteristic (dexterity, size, ability, etc.) and the varaible being a pointer to the instance) 
+                            //TODO; this probably needs a better format
     INITIATIVE,     // used whenever initiative is rolled
     EV_COUNT,       // keep at end of fired events; a counter of how many fired events exist
     USE,            // unique event, sent directly to the ability being used on the specific entity it's used on
@@ -23,6 +25,9 @@ typedef enum{
     REMOVE,         // unique event, used when an ability instance is removed from an entity, cleans up any varaibles or statuses
     GET_DATA,       // unique event used to retrieve the name and formatting of an ability instance from the ability function (which is constant and generic); info must contain "dest", which is the destination for the requested data
     GET_TAGS,       // unique event used to retrieve any tags associated with an ability/status (charmed, paralyzed, DEBUG, etc.)
+    REPEAT,         // unique event used when a function is repeated. if not defined, repeatedly adde abilities will simply be ignored; 
+                    //info contains a pointer to a pointer to the intitalization info being sent to the new instance, and a pointer to an repeat" variable; 
+                    //if this varaible is set to 1, the instance is added (stacked), if its 0 the new instance is discarded. discards new instance by default.
     EV_TOTAL        // total number of events, including unqiue ones
 }Event;
 

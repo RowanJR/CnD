@@ -11,6 +11,7 @@
 int main()
 {
     InitializeEventManager();
+    InitializeDice();
     /*
     Ability ab;
 
@@ -42,6 +43,7 @@ int main()
 
     johnny = DEBUG_SimpleEntity();
 
+    /*
     AddAbility(&DEBUG_Test, johnny, NULL);
 
     FireEvent(TURN_START, NULL);
@@ -62,6 +64,25 @@ int main()
     FreeList(info);
 
     RemoveAbility(&DEBUG_Test, johnny);
+    */
+
+    node *info = NULL;
+
+    int* turns = malloc(sizeof(int));
+    *turns = 100;
+    AddNode(&info, "initial_turns", turns, INT);
+    AddAbility(&Debug_Burning, johnny, info);
+    FreeList(info);
+
+    while(johnny->currentHP > 0)
+    {
+        FireEvent(TIMESTEP, NULL);
+        printf("HP: %d\n", johnny->currentHP);
+    }
+
+    RemoveAbility(&Debug_Burning, johnny);
+
+    FreeEntity(johnny);
 
     CloseEventManager();
 

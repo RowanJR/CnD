@@ -4,10 +4,13 @@
 #include <time.h>
 #include "dice.h"
 
-//rolls die
-int Roll(int sides)
+void InitializeDice()
 {
     srand(time(NULL));
-    
+}
+
+//rolls die
+int Roll(int sides)
+{   
     return (rand() % sides) + 1;;
 }

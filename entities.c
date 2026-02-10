@@ -11,6 +11,16 @@ Entity* DEBUG_SimpleEntity()
     fin->abilities.count = 0;
     fin->abilities.length = 16;
     fin->abilities.list = malloc(sizeof(Ability)*16);
+
+    fin->maxHP = 10;
+    fin->currentHP = fin->maxHP;
+
+    for(int i = 0; i < TYPES_NUMBER; i++)
+    {
+        fin->resistances[i] = 0;
+    }
+
+    return fin;
 }
 
 int GetModifier(int value)
@@ -31,37 +41,108 @@ int GetModifier(int value)
 
 void AddAbility(void* abilfunctionptr, Entity* entity, node* info)
 {
+    int alreadyexists = 0;
 
-    entity->abilities.count++;
+    Ability* existinginst = NULL;
 
-    if(entity->abilities.count > entity->abilities.length)
+    //need to iterate through list, call "repeat" event if this ability already exists, which queries an ability of what to do in the event of a repeat, and implement what the ability wants
+    for(int i = 0; i < entity->abilities.count; i++)
     {
-        Ability* newarr = malloc(sizeof(Ability*)*entity->abilities.length*2);
-
-        for(int i = 0; i < entity->abilities.count; i++)
+        if((long)(entity->abilities.list[i].abilfunction) == (long)abilfunctionptr)
         {
-            newarr[i].ability_holder = entity->abilities.list[i].ability_holder;
-            newarr[i].variables = entity->abilities.list[i].variables;
-            newarr[i].abilfunction = entity->abilities.list[i].abilfunction;
+            alreadyexists = 1;
+            existinginst = &(entity->abilities.list[i]);
+            break;
+        }
+    }
+    //TODO: PLACEHOLDER
+    alreadyexists = 0;
+
+    if(!alreadyexists)
+    {
+        entity->abilities.count++;
+
+        if(entity->abilities.count > entity->abilities.length)
+        {
+            Ability* newarr = malloc(sizeof(Ability*)*entity->abilities.length*2);
+
+            for(int i = 0; i < entity->abilities.count; i++)
+            {
+                newarr[i].ability_holder = entity->abilities.list[i].ability_holder;
+                newarr[i].variables = entity->abilities.list[i].variables;
+                newarr[i].abilfunction = entity->abilities.list[i].abilfunction;
+            }
+
+            free(entity->abilities.list);
+            entity->abilities.list = newarr;
+            entity->abilities.length *= 2;
         }
 
-        free(entity->abilities.list);
-        entity->abilities.list = newarr;
-        entity->abilities.length *= 2;
+        //ISSUE this might not persist after this funciton ends, ensure abilities still remain
+        Ability newab;
+
+        newab.ability_holder = entity;
+        newab.variables = NULL;
+        newab.abilfunction = abilfunctionptr;
+
+        entity->abilities.list[entity->abilities.count - 1] = newab;
+
+        // trigger initial ability
+        NotifyAbility(info, INITIAL, &(entity->abilities.list[entity->abilities.count - 1]));
     }
+    else
+    {
+        int *repeatdesired = malloc(sizeof(int));
 
+        node **infoptr = malloc(sizeof(node***));
 
-    //ISSUE this might not persist after this funciton ends, ensure abilities still remain
-    Ability newab;
+        *infoptr = info;
 
-    newab.ability_holder = entity;
-    newab.variables = NULL;
-    newab.abilfunction = abilfunctionptr;
+        node *subinfo = NULL;
 
-    entity->abilities.list[entity->abilities.count - 1] = newab;
+        AddNode(&subinfo, "new_info", infoptr, PTR);
 
-    // trigger initial ability
-    NotifyAbility(NULL, INITIAL, &(entity->abilities.list[entity->abilities.count - 1]));
+        AddNode(&subinfo, "repeat", repeatdesired, INT);
+
+        NotifyAbility(subinfo, REPEAT, existinginst);
+
+        //yes, this is the exact code from above.
+        if(repeatdesired)
+        {
+            entity->abilities.count++;
+
+            if(entity->abilities.count > entity->abilities.length)
+            {
+                Ability* newarr = malloc(sizeof(Ability*)*entity->abilities.length*2);
+
+                for(int i = 0; i < entity->abilities.count; i++)
+                {
+                    newarr[i].ability_holder = entity->abilities.list[i].ability_holder;
+                    newarr[i].variables = entity->abilities.list[i].variables;
+                    newarr[i].abilfunction = entity->abilities.list[i].abilfunction;
+                }
+
+                free(entity->abilities.list);
+                entity->abilities.list = newarr;
+                entity->abilities.length *= 2;
+            }
+
+            //ISSUE this might not persist after this funciton ends, ensure abilities still remain
+            Ability newab;
+
+            newab.ability_holder = entity;
+            newab.variables = NULL;
+            newab.abilfunction = abilfunctionptr;
+
+            entity->abilities.list[entity->abilities.count - 1] = newab;
+
+            // trigger initial ability
+            NotifyAbility(info, INITIAL, &(entity->abilities.list[entity->abilities.count - 1]));
+        }
+
+        FreeList(subinfo);
+
+    }  
     
     return;
 }
@@ -95,17 +176,17 @@ void DealDamage(Damage_Types* damage, Entity* entity)
     for(int i = 0; i < TYPES_NUMBER; i++)
     {
         //vulnerable
-        if(entity->resistances[i] = -1)
+        if(entity->resistances[i] == -1)
         {
             entity->currentHP -= (2 * damage[i]);
         }
         //resistant
-        else if(entity->resistances[i] = 1)
+        else if(entity->resistances[i] == 1)
         {
             entity->currentHP -= (damage[i] / 2);
         }
         //immune
-        else if(entity->resistances[i] = 2)
+        else if(entity->resistances[i] == 2)
         {
 
         }
