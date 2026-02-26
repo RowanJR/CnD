@@ -10,61 +10,12 @@
 
 int main()
 {
-    InitializeEventManager();
+    /*InitializeEventManager();
     InitializeDice();
-    /*
-    Ability ab;
-
-    ab.variables = NULL;
-    ab.ability_holder = NULL;
-    ab.abilfunction = &DEBUG_Test;
-
-    ab.abilfunction(NULL, INITIAL, &ab);
-
-    FireEvent(TURN_START, NULL);
-
-    node *info = NULL;
-    node *data = NULL; 
-
-    node*** datapointer = malloc(sizeof(node**));
-    *datapointer = &data;
-
-    AddNode(&info, "dest", datapointer, PTR);
-    ab.abilfunction(info, GET_TAGS, &ab);
-  
-    DEBUG_PrintList(data);
-
-    FreeList(data);
-    FreeList(info);
-
-    ab.abilfunction(NULL, REMOVE, &ab);*/
 
     Entity* johnny;
 
     johnny = DEBUG_SimpleEntity();
-
-    /*
-    AddAbility(&DEBUG_Test, johnny, NULL);
-
-    FireEvent(TURN_START, NULL);
-
-    node *info = NULL;
-    node *data = NULL; 
-
-    node*** datapointer = malloc(sizeof(node**));
-    *datapointer = &data;
-
-    AddNode(&info, "dest", datapointer, PTR);
-
-    NotifyAllAbilities(johnny, GET_TAGS, info);
-
-    DEBUG_PrintList(data);
-
-    FreeList(data);
-    FreeList(info);
-
-    RemoveAbility(&DEBUG_Test, johnny);
-    */
 
     node *info = NULL;
 
@@ -84,7 +35,9 @@ int main()
 
     FreeEntity(johnny);
 
-    CloseEventManager();
+    CloseEventManager();*/
+
+    
 
     return 0;
 }

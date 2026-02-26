@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
-#include "map.h"
+#include "map2d.h"
 #include "ability_system.h"
 
 //global event manager used by notifier functions

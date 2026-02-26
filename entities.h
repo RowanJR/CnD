@@ -133,6 +133,7 @@ typedef struct{
     //Chunk* currentchunk;
 }Entity;
 
+//initialize a basic entity for debugging and testing
 Entity* DEBUG_SimpleEntity();
 
 int GetModifier(int value);
