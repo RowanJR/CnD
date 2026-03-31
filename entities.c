@@ -232,3 +232,10 @@ void FreeEntity(Entity* entity)
 
     return;
 }
+
+void Attack(Entity* target, Entity* attacker)
+{
+    
+
+    return;
+}

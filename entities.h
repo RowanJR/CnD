@@ -2,7 +2,7 @@
 #define ENTITIES_H_
 
 #include "ability_system.h"
-//#include "map.h"
+#include "map2d.h"
 
 typedef enum{
     SLASHING,
@@ -130,7 +130,7 @@ typedef struct{
 
     Ability_Manager abilities;
 
-    //Chunk* currentchunk;
+    Creature* location;
 }Entity;
 
 //initialize a basic entity for debugging and testing
@@ -155,5 +155,7 @@ void Heal(int healing, Entity* entity);
 void NotifyAllAbilities(Entity* entity, Event event, node* info);
 
 void FreeEntity(Entity* entity);
+
+void Attack(Entity* target, Entity* attacker);
 
 #endif // ENTITIES_H_

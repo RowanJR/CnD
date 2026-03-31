@@ -8,7 +8,8 @@ typedef enum {
     STONE,
     SHALLOW_WATER,
     DEEP_WATER,
-    WOOD_WALL
+    WOOD_WALL,
+    STONE_WALL
 }tiles;
 /*
 extern int nontraversible[] = {

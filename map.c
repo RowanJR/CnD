@@ -6,8 +6,8 @@
 //TODO listed also in map.h, but architechture needs reworking because map is circularly dependant on entities
 //I think all void pointers are entity pointer placeholders
 
-int CHUNK_WIDTH = 5;
-int CHUNK_AREA = 25;
+int CHUNK_WIDTH = 10;
+int CHUNK_AREA = 100;
 
 //used to quickly construct a coordinate
 Coord MakeCoord(float x, float y)
