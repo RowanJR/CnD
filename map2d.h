@@ -43,7 +43,7 @@ int IndexChunk(Vec c);
 // converts back from chunk index to Vec from chunk
 Vec IndexToCoord(int ind);
 
-Chunk* InitializeChunk();
+Chunk* InitializeChunk(int seed);
 
 Chunk* LoadChunk();
 
@@ -74,6 +74,8 @@ Loaded_area* InitializeLoaded(int loaddist);
 
 //shifts the current loaded area by up to one chunk in the direction specified by the shift vector (max of 1 chunk despite whatever is passed through)
 void ShiftLoaded(Loaded_area* loaded, Vec shift);
+
+void UnloadLoaded(Loaded_area* loaded);
 
 //directly places an enemy in a chunk, returns 1 if space is occupied, 0 if all goes well
 int PlaceEntity(Chunk* fromchunk, Chunk* tochunk, Creature* entity, Vec location);

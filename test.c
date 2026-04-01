@@ -39,35 +39,137 @@ int main()
 
     Loaded_area* loaded = InitializeLoaded(1);
 
-    ShiftLoaded(loaded, MakeVec(-1, 0));
-
-    for(int i = 0; i < 9; i++)
     {
-        if(loaded->chunks[i] == NULL)
+    int side = (loaded->loaddistance * 2) + 1;
+
+    printf("C ");
+    for(int i = 0; i < side; i++)
+    {
+        if(loaded->downbuffer != NULL)
         {
-            printf("main\n");
+            printf("%d ", loaded->downbuffer[i]->cells[0]);
+        }
+        else
+        {
+            printf("N ");
+        }
+    }
+    printf("C \n");
+
+    for(int i = 0; i < side; i++)
+    {
+        
+        if(loaded->leftbuffer != NULL)
+        {
+            printf("%d ", loaded->leftbuffer[i]->cells[0]);
+        }
+        else
+        {
+            printf("N ");
+        }
+        for(int j = 0; j < side; j++)
+        {
+            if(loaded->chunks[j] != NULL)
+            {
+                printf("%d ", loaded->chunks[i*side+j]->cells[0]);
+            }
+            else
+            {
+                printf("N ");
+            }
+        }
+        if(loaded->rightbuffer != NULL)
+        {
+            printf("%d \n", loaded->rightbuffer[i]->cells[0]);
+        }
+        else
+        {
+            printf("N \n");
         }
     }
 
-    for(int i = 0; i < 3; i++)
+    printf("C ");
+    for(int i = 0; i < side; i++)
     {
-        if(loaded->downbuffer[i] == NULL)
+        if(loaded->upbuffer != NULL)
         {
-            printf("db\n");
+            printf("%d ", loaded->upbuffer[i]->cells[0]);
         }
-        if(loaded->upbuffer[i] == NULL)
+        else
         {
-            printf("ub\n");
-        }
-        if(loaded->leftbuffer[i] == NULL)
-        {
-            printf("lb\n");
-        }
-        if(loaded->rightbuffer[i] == NULL)
-        {
-            printf("rb\n");
+            printf("N ");
         }
     }
+    printf("C \n");
+    }
+
+    ShiftLoaded(loaded, MakeVec(0, -1));
+    printf("\n");
+    {
+    int side = (loaded->loaddistance * 2) + 1;
+
+    printf("C ");
+    for(int i = 0; i < side; i++)
+    {
+        if(loaded->downbuffer != NULL)
+        {
+            printf("%d ", loaded->downbuffer[i]->cells[0]);
+        }
+        else
+        {
+            printf("N ");
+        }
+    }
+    printf("C \n");
+
+    for(int i = 0; i < side; i++)
+    {
+        
+        if(loaded->leftbuffer != NULL)
+        {
+            printf("%d ", loaded->leftbuffer[i]->cells[0]);
+        }
+        else
+        {
+            printf("N ");
+        }
+        for(int j = 0; j < side; j++)
+        {
+            if(loaded->chunks[j] != NULL)
+            {
+                printf("%d ", loaded->chunks[i*side+j]->cells[0]);
+            }
+            else
+            {
+                printf("N ");
+            }
+        }
+        if(loaded->rightbuffer != NULL)
+        {
+            printf("%d \n", loaded->rightbuffer[i]->cells[0]);
+        }
+        else
+        {
+            printf("N \n");
+        }
+    }
+
+    printf("C ");
+    for(int i = 0; i < side; i++)
+    {
+        if(loaded->upbuffer != NULL)
+        {
+            printf("%d ", loaded->upbuffer[i]->cells[0]);
+        }
+        else
+        {
+            printf("N ");
+        }
+    }
+    printf("C \n");
+    }
+
+    UnloadLoaded(loaded);
 
     return 0;
 }

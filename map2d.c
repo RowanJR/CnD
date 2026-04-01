@@ -47,7 +47,7 @@ Vec IndexToCoord(int ind)
     return newcoord;
 }
 
-Chunk* InitializeChunk()
+Chunk* InitializeChunk(int seed)
 {
     Chunk* retchunk = malloc(sizeof(Chunk));
 
@@ -59,17 +59,28 @@ Chunk* InitializeChunk()
 
     retchunk->cells = malloc(sizeof(unsigned short int) * CHUNK_AREA);
 
+    //TODO proper seed generation
+    for(int i = 0; i < CHUNK_AREA; i++)
+    {
+        retchunk->cells[i] = seed;
+    }
+
     return retchunk;
 }
 
 Chunk* LoadChunk()
 {
     //TODO actually load chunk
-    return InitializeChunk();
+    return NULL;
 }
 
 void UnloadChunk(Chunk* chunk)
 {
+    for(int i = 0; i < chunk->numentities; i++)
+    {
+        free(chunk->entities[i]);
+    }
+    free(chunk->entities);
     free(chunk->cells);
     free(chunk);
     return;
@@ -172,20 +183,21 @@ Loaded_area* InitializeLoaded(int loaddist)
     for(int i = 0; i < (side * side); i++)
     {
         //TODO actually load the right chunks
-        ret->chunks[i] = LoadChunk();
+        ret->chunks[i] = InitializeChunk(i);
     }
 
     for(int i = 0; i < side; i++)
     {
-        ret->upbuffer[i] = LoadChunk();
-        ret->downbuffer[i] = LoadChunk();
-        ret->leftbuffer[i] = LoadChunk();
-        ret->rightbuffer[i] = LoadChunk();
+        ret->upbuffer[i] = InitializeChunk(9-i);
+        ret->downbuffer[i] = InitializeChunk(6-i);
+        ret->leftbuffer[i] = InitializeChunk(3-i);
+        ret->rightbuffer[i] = InitializeChunk(0);
     }
 
     return ret;
 }
 
+//TODO shifts work, but are not actually loading anything. Need to properly index and unload/load chunks to/from memory
 void ShiftLoaded(Loaded_area* loaded, Vec shift)
 {
     int side = (loaded->loaddistance * 2) + 1;
@@ -193,15 +205,23 @@ void ShiftLoaded(Loaded_area* loaded, Vec shift)
     //move to the right
     if(shift.x >= 0.5)
     {
+        //unload last chunk in top and bottom array
+        UnloadChunk(loaded->upbuffer[side - 1]);
+        UnloadChunk(loaded->downbuffer[side - 1]);
         //move right side of array into right buffer
-        //shift top and bottom buffers
+        //shift top and bottom buffers to the right one
         for(int i = 0; i < side; i++)
         {
             UnloadChunk(loaded->rightbuffer[i]);
-            loaded->rightbuffer[i] = loaded->chunks[(side - 1) * i];
-
-            loaded->upbuffer[side - i] = loaded->upbuffer[side - i - 1];
-            loaded->downbuffer[side - i] = loaded->downbuffer[side - i - 1];
+        }
+        for(int i = side - 1; i > 0; i--)
+        {
+            loaded->upbuffer[i] = loaded->upbuffer[i - 1];
+            loaded->downbuffer[i] = loaded->downbuffer[i - 1];
+        }
+        for(int i = 0; i < side; i++)
+        {
+            loaded->rightbuffer[i] = loaded->chunks[side + (side * i) - 1];
         }
 
         //shift contents of array right
@@ -218,28 +238,163 @@ void ShiftLoaded(Loaded_area* loaded, Vec shift)
         //TODO load entire left buffer, and first element of up and down buffer
         for(int i = 0; i < side; i++)
         {
-            loaded->leftbuffer[i] = LoadChunk();
+            loaded->leftbuffer[i] = InitializeChunk(1);
         }
-        loaded->upbuffer[0] = LoadChunk();
-        loaded->downbuffer[0] = LoadChunk();
+        loaded->upbuffer[0] = InitializeChunk(1);
+        loaded->downbuffer[0] = InitializeChunk(1);
     }
     //move to the left
     else if(shift.x <= -0.5)
     {
+        //unload first chunk in top and bottom array
+        UnloadChunk(loaded->upbuffer[0]);
+        UnloadChunk(loaded->downbuffer[0]);
+        //move left side of array into left buffer
+        //shift top and bottom buffers to the left one
+        for(int i = 0; i < side; i++)
+        {
+            UnloadChunk(loaded->leftbuffer[i]);
+            loaded->leftbuffer[i] = loaded->chunks[side * i];
+
+            if(i < side - 1)
+            {
+                loaded->upbuffer[i] = loaded->upbuffer[i + 1];
+                loaded->downbuffer[i] = loaded->downbuffer[i + 1];
+            }
+        }
+
+        //shift contents of array left
+        for(int i = 0; i < side; i++)
+        {
+            for(int j = 0; j < side; j++)
+            {
+                loaded->chunks[(i*side) + j] = loaded->chunks[(i*side) + j + 1];
+            }
+            //move right buffer into array
+            loaded->chunks[(side - 1) + (i * side)] = loaded->rightbuffer[i];
+        }
         
+        //TODO load entire right buffer, and last element of up and down buffer
+        for(int i = 0; i < side; i++)
+        {
+            loaded->rightbuffer[i] = InitializeChunk(1);
+        }
+        loaded->upbuffer[side - 1] = InitializeChunk(1);
+        loaded->downbuffer[side - 1] = InitializeChunk(1);
     }
 
     //move up
     if(shift.y >= 0.5)
     {
+        //unload last chunk in left and right array
+        UnloadChunk(loaded->leftbuffer[side - 1]);
+        UnloadChunk(loaded->rightbuffer[side - 1]);
+        //move final row of array into up buffer
+        //shift right and left array up one
+        for(int i = 0; i < side; i++)
+        {
+            UnloadChunk(loaded->upbuffer[i]);
+            loaded->upbuffer[i] = loaded->chunks[side * (side - 1) + i];
 
+            if(i > 0)
+            {
+                loaded->leftbuffer[side - i] = loaded->leftbuffer[side - i - 1];
+                loaded->rightbuffer[side - i] = loaded->rightbuffer[side - i - 1];
+            }
+        }
+
+        //shift contents of array up
+        for(int i = side - 1; i > 0; i--)
+        {
+            for(int j = 0; j < side; j++)
+            {
+                loaded->chunks[(i*side) + j] = loaded->chunks[((i - 1) * side) + j ];
+            }
+        }
+        //move down buffer into array
+        for(int i = 0; i < side; i++)
+        {  
+            loaded->chunks[i] = loaded->downbuffer[i];
+        }
+
+        //TODO load entire down buffer, and first element of right and left buffer
+        for(int i = 0; i < side; i++)
+        {
+            loaded->downbuffer[i] = InitializeChunk(1);
+        }
+        loaded->rightbuffer[0] = InitializeChunk(1);
+        loaded->leftbuffer[0] = InitializeChunk(1);
     }
     //move down
     else if(shift.y <= -0.5)
     {
+        //unload first chunk in left and right array
+        UnloadChunk(loaded->leftbuffer[0]);
+        UnloadChunk(loaded->rightbuffer[0]);
+        //move first row of array into down buffer
+        for(int i = side - 1; i >= 0; i--)
+        {
+            UnloadChunk(loaded->downbuffer[i]);
+            loaded->downbuffer[i] = loaded->chunks[i];
+        }
+        //shift right and left array down one
+        for(int i = 0; i < side; i++)
+        {
+            loaded->leftbuffer[i] = loaded->leftbuffer[i + 1];
+            loaded->rightbuffer[i] = loaded->rightbuffer[i + 1];
+        }
         
+        //shift contents of array down
+        for(int i = 0; i < side; i++)
+        {
+            for(int j = 0; j < side; j++)
+            {
+                loaded->chunks[(i * side) + j] = loaded->chunks[((i + 1) * side) + j];
+            }
+        }
+        //move up buffer into array
+        for(int i = 0; i < side; i++)
+        {
+            loaded->chunks[side * (side - 1) + i] = loaded->upbuffer[i];
+        }
+
+        //TODO load entire up buffer, and last element of right and left buffer
+        for(int i = 0; i < side; i++)
+        {
+            loaded->upbuffer[i] = InitializeChunk(1);
+        }
+        loaded->rightbuffer[side - 1] = InitializeChunk(1);
+        loaded->leftbuffer[side - 1] = InitializeChunk(1);
     }
 
+    return;
+}
+
+void UnloadLoaded(Loaded_area* loaded)
+{
+    int side = (loaded->loaddistance * 2) + 1;
+
+    for(int i = 0; i < (side * side); i++)
+    {
+        UnloadChunk(loaded->chunks[i]);
+    }
+
+    free(loaded->chunks);
+
+    for(int i = 0; i < side; i++)
+    {
+        UnloadChunk(loaded->downbuffer[i]);
+        UnloadChunk(loaded->upbuffer[i]);
+        UnloadChunk(loaded->rightbuffer[i]);
+        UnloadChunk(loaded->leftbuffer[i]);
+    }
+
+    free(loaded->downbuffer);
+    free(loaded->upbuffer);
+    free(loaded->leftbuffer);
+    free(loaded->rightbuffer);
+
+    free(loaded);
     return;
 }
 
