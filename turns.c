@@ -43,7 +43,7 @@ void AddInitiative(int initiative, Entity* creature)
     //this shouldn't happen normally, but to make testing easier I allow for the creature passed in to be NULL
     if(creature != NULL)
     {
-        newcard->dexmod = GetModifier(creature->stats.de);
+        newcard->dexmod = GetModifier(creature->stats[DEXTERITY]);
     }
     else
     {

@@ -47,14 +47,37 @@ typedef enum{
     GARGANTUAN
 }Size;
 
-//uses first two letters for stats because of "int" and they're good enough
-typedef struct{
-    int st;
-    int de;
-    int co;
-    int wi;
-    int in;
-    int ch;
+//enum containing all skills for proficiencies
+typedef enum{
+    ACROBATICS,
+    ANIMAL_HANDLING,
+    ARCANA,
+    ATHLETICS,
+    DECEPTION,
+    HISTORY,
+    INSIGHT,
+    INTIMIDATION,
+    INVESTIGATION,
+    MEDICINE,
+    NATURE,
+    PERCEPTION,
+    PERFORMANCE,
+    PERSUASION,
+    RELIGION,
+    SLEIGHT_OF_HAND,
+    STEALTH,
+    SURVIVAL,
+    SKILLS_NUMBER
+}Skill;
+
+typedef enum Stats{
+    STRENGTH,
+    DEXTERITY,
+    CONSTITUTION,
+    INTELLIGENCE,
+    WISDOM,
+    CHARISMA,
+    STATS_NUMBER
 }Stats;
 
 //range in squares (feet/5) of each sense of a creature
@@ -104,10 +127,12 @@ typedef struct{
     //a boolean that determines whether an entity acts during initiative or can't, like a tree 
     short int initiative;
 
-
-    Stats stats;
-    Damage_Types resistances[TYPES_NUMBER];
+    //TODO ensure these predefined arrays aren't on the stack when an Entity is created on the heap
+    int stats[STATS_NUMBER];
+    Damage_Types resistances[TYPES_NUMBER]; //TODO see prev
     Senses senses;
+
+    Skill skills[SKILLS_NUMBER]; //TODO see prev
 
     Dice hitdice;
     Dice currenthitdice;
@@ -133,6 +158,37 @@ typedef struct{
     Creature* location;
 }Entity;
 
+//----- The following structs are packets that are created and destroyed by acertain actions and allow for event listeners to modify a single source before it's executed -----
+// listeners can modify these structs, with the final modified struct being used by the function, which then deletes it before returning
+
+typedef struct{
+    Entity* target; //target of check
+    Stats abilityscore; //ability score being used
+    Skill proficiency; //proficiency/type of skill check
+
+    int advantages; //counts the number of things that are granting advantage
+    int disadvantages; //counts the number of things that are granting disadvantage
+
+    int additionalmodifier; //additional +/- to total, besides basic ability scores
+
+}Skill_Check_Pack;
+
+typedef struct{
+    Entity* target;
+    Entity* attacker;
+
+}Attack_Pack;
+
+typedef struct{
+    Entity* target;
+    Stats proficiency;
+
+}Save_Pack;
+
+//returns default ability score used for each skill
+// if skill isn't added to this function the default return value is constitution, because no vanilla skill uses that and it should raise concern
+Stats GetDefaultSkillScore(Skill skill);
+
 //initialize a basic entity for debugging and testing
 Entity* DEBUG_SimpleEntity();
 
@@ -156,6 +212,14 @@ void NotifyAllAbilities(Entity* entity, Event event, node* info);
 
 void FreeEntity(Entity* entity);
 
+//returns the rolled ability check (for case of contest)
+// target is entity rolling
+// prof is the proficiency being used
+// score is the ability score being added (use "defaultskillscore[prof]" for the default of the proficiency)
+int AbilityCheck(Entity* target, Skill prof, Stats score);
+
 void Attack(Entity* target, Entity* attacker);
+
+void SavingThrow();
 
 #endif // ENTITIES_H_

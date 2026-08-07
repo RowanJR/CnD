@@ -3,6 +3,56 @@
 #include <math.h>
 #include "ability_system.h"
 #include "entities.h"
+#include "dice.h"
+
+int RAWADVANTAGERULE = 0; //gamerule for rules-as-written advantage; if there is both advantage and disadvantages on a roll, it's straight, even with 100 advantages and 1 disadvantage. If 0, we use the logical "whichever has more" approach
+
+Stats GetDefaultSkillScore(Skill skill)
+{
+    switch(skill)
+    {
+        case ACROBATICS:
+            return DEXTERITY;
+        case ANIMAL_HANDLING:
+            return WISDOM;
+        case ARCANA:
+            return INTELLIGENCE;
+        case ATHLETICS:
+            return STRENGTH;
+        case DECEPTION:
+            return CHARISMA;
+        case HISTORY:
+            return INTELLIGENCE;
+        case INSIGHT:
+            return WISDOM;
+        case INTIMIDATION:
+            return CHARISMA;
+        case INVESTIGATION:
+            return INTELLIGENCE;
+        case MEDICINE:
+            return WISDOM;
+        case NATURE:
+            return INTELLIGENCE;
+        case PERCEPTION:
+            return WISDOM;
+        case PERFORMANCE:
+            return CHARISMA;
+        case PERSUASION:
+            return CHARISMA;
+        case RELIGION:
+            return INTELLIGENCE;
+        case SLEIGHT_OF_HAND:
+            return DEXTERITY;
+        case STEALTH:
+            return DEXTERITY;
+        case SURVIVAL:
+            return WISDOM;
+        default:
+            break;
+    }
+    //should raise confusion if something is wrong, since no skill uses constitution
+    return CONSTITUTION;
+}
 
 Entity* DEBUG_SimpleEntity()
 {
@@ -233,9 +283,89 @@ void FreeEntity(Entity* entity)
     return;
 }
 
+int AbilityCheck(Entity* target, Skill prof, Stats score)
+{
+    Skill_Check_Pack* checkptr = malloc(sizeof(Skill_Check_Pack));
+
+    checkptr->abilityscore = score;
+    checkptr->proficiency = prof;
+    checkptr->target = target;
+
+    checkptr->advantages = 0;
+    checkptr->disadvantages = 0;
+    checkptr->additionalmodifier = 0;
+
+    node *info = NULL; //make out info linked-list
+    //we're making a pointer to a pointer so that we free the pointer when we free the list, instead of the struct which it points to
+    Skill_Check_Pack** checkptrptr = malloc(sizeof(Skill_Check_Pack*)); //allocate the pointer to the pointer
+    *checkptrptr = checkptr; //set the pointer to the packet we've made
+
+    AddNode(&info, "Skill_Check_Pack", checkptrptr, UNKNOWN); //add the pointer to out info linked list
+
+    FireEvent(CHECK, info); //fire the event and supply a pointer to the info
+
+    FreeList(info); //free info list after everything notified by the listener system has gotten to act on our packet
+
+    int finalroll;//initialize our roll
+    //this step gives us our unmodified dice roll. Can change based on selected game rule.
+    //"cancelling advantage" rules-as-written
+    if(RAWADVANTAGERULE)
+    {
+        //roll with advantage
+        if((checkptr->advantages > 0 && checkptr->disadvantages == 0))
+        {
+            finalroll = RollAdvantage(20);
+        }
+        //roll with disadvantage
+        else if((checkptr->advantages == 0 && checkptr->disadvantages > 0))
+        {
+            finalroll = RollDisadvantage(20);
+        }
+        //roll straight
+        else
+        {
+            finalroll = Roll(20);
+        }
+    }
+    //"duelling advantage" rule
+    else
+    {
+        int advantagedif = checkptr->advantages - checkptr->disadvantages;
+        //roll with advantage
+        if(advantagedif > 0)
+        {
+            finalroll = RollAdvantage(20);
+        }
+        //roll with disadvantage
+        else if(advantagedif < 0)
+        {
+            finalroll = RollDisadvantage(20);
+        }
+        //roll straight
+        else
+        {
+            finalroll = Roll(20);
+        }
+    }
+
+    //TODO need some system for rolling 1s. maybe just automatically return a 1, should have a game rule for if 1s auto-fail Ability Checks.
+
+    
+
+    free(checkptr); //free our check packet before we go
+    return finalroll;
+}
+
 void Attack(Entity* target, Entity* attacker)
 {
     
+
+    return;
+}
+
+void SavingThrow()
+{
+
 
     return;
 }

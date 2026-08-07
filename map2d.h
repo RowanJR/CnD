@@ -83,4 +83,7 @@ int PlaceEntity(Chunk* fromchunk, Chunk* tochunk, Creature* entity, Vec location
 //moves an entity along vector to set location, returns 1 if space is occupied, 0 if all goes well
 int MoveEntity(Chunk* chunk, Creature* entity, Vec direction);
 
+//finds the respective chunk compared to the one given
+Chunk* ReferenceChunk(Loaded_area* loaded, Chunk* current, Vec dir);
+
 #endif

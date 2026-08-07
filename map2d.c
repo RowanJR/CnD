@@ -4,6 +4,14 @@
 #include "map2d.h"
 #include "tiles.h"
 
+typedef enum {
+    MAIN,
+    LEFT,
+    RIGHT,
+    UP,
+    DOWN
+}loc;
+
 Vec MakeVec(float x, float y)
 {
     Vec newCoord;
@@ -183,14 +191,14 @@ Loaded_area* InitializeLoaded(int loaddist)
     for(int i = 0; i < (side * side); i++)
     {
         //TODO actually load the right chunks
-        ret->chunks[i] = InitializeChunk(i);
+        ret->chunks[i] = InitializeChunk(0);
     }
 
     for(int i = 0; i < side; i++)
     {
-        ret->upbuffer[i] = InitializeChunk(9-i);
-        ret->downbuffer[i] = InitializeChunk(6-i);
-        ret->leftbuffer[i] = InitializeChunk(3-i);
+        ret->upbuffer[i] = InitializeChunk(0);
+        ret->downbuffer[i] = InitializeChunk(0);
+        ret->leftbuffer[i] = InitializeChunk(0);
         ret->rightbuffer[i] = InitializeChunk(0);
     }
 
@@ -442,4 +450,98 @@ int MoveEntity(Chunk* chunk, Creature* entity, Vec direction)
     return 0;
 }
 
+Chunk* ReferenceChunk(Loaded_area* loaded, Chunk* current, Vec dir)
+{
+    int side = (loaded->loaddistance * 2) + 1;
 
+    int index = 0;
+
+    loc location = MAIN;
+
+    //2D vector showing our current's location (indexed starting in the corner between the left and bottom buffers)
+    Vec curloc = MakeVec(0, 0);
+
+    dir.x = round(dir.x);
+    dir.y = round(dir.y);
+
+    for(int i = 0; i < side; i++)
+    {
+        if(loaded->rightbuffer[i] == current)
+        {
+            index = i;
+            location = RIGHT;
+            break;
+        }
+        if(loaded->leftbuffer[i] == current)
+        {
+            index = i;
+            location = LEFT;
+            break;
+        }
+        if(loaded->upbuffer[i] == current)
+        {
+            index = i;
+            location = UP;
+            break;
+        }
+        if(loaded->downbuffer[i] == current)
+        {
+            index = i;
+            location = DOWN;
+            break;
+        }
+        for(int j = 0; j < side; j++)
+        {
+            if(loaded->chunks[(i * side) + j] == current)
+            {
+                index = (i * side) + j;
+                location = MAIN;
+                break;
+            }
+        }
+    }
+
+    switch(location)
+    {
+        case MAIN:
+            if(dir.x > side || dir.y > side || dir.y < -side || dir.x < -side)
+            {
+                return NULL;
+            }
+            curloc = MakeVec((index - (index/side)), (index/side));
+            
+            break;
+        case RIGHT:
+            if(dir.x > 0 || dir.y > side || dir.y < -side)
+            {
+                return NULL;
+            }
+            curloc = MakeVec(side + 1, index);
+            break;
+        case LEFT:
+            if(dir.x < 0  || dir.y > side || dir.y < -side)
+            {
+                return NULL;
+            }
+            curloc = MakeVec(0, index);
+            break;
+        case UP:
+            if(dir.y > 0 || dir.x > side || dir.x < -side)
+            {
+                return NULL;
+            }
+            curloc = MakeVec(index, side + 1);
+            break;
+        case DOWN:
+            if(dir.y < 0 || dir.x > side || dir.x < -side)
+            {
+                return NULL;
+            }
+            curloc = MakeVec(index, 0);
+            break;
+        default:
+            break;
+    }
+    
+    return current;
+}

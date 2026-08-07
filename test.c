@@ -37,7 +37,7 @@ int main()
 
     CloseEventManager();*/
 
-    Loaded_area* loaded = InitializeLoaded(1);
+    /*Loaded_area* loaded = InitializeLoaded(1);
 
     {
     int side = (loaded->loaddistance * 2) + 1;
@@ -169,7 +169,7 @@ int main()
     printf("C \n");
     }
 
-    UnloadLoaded(loaded);
+    UnloadLoaded(loaded);*/
 
     return 0;
 }
