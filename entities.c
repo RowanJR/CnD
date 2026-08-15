@@ -5,7 +5,7 @@
 #include "entities.h"
 #include "dice.h"
 
-int RAWADVANTAGERULE = 0; //gamerule for rules-as-written advantage; if there is both advantage and disadvantages on a roll, it's straight, even with 100 advantages and 1 disadvantage. If 0, we use the logical "whichever has more" approach
+int RAWADVANTAGERULE = 0; //gamerule for rules-as-written advantage; if there is both advantage and disadvantages on a roll, it's straight, even with 100 advantages and 1 disadvantage. If 0, we use the "whichever has more" approach
 
 Stats GetDefaultSkillScore(Skill skill)
 {
@@ -300,7 +300,7 @@ int AbilityCheck(Entity* target, Skill prof, Stats score)
     Skill_Check_Pack** checkptrptr = malloc(sizeof(Skill_Check_Pack*)); //allocate the pointer to the pointer
     *checkptrptr = checkptr; //set the pointer to the packet we've made
 
-    AddNode(&info, "Skill_Check_Pack", checkptrptr, UNKNOWN); //add the pointer to out info linked list
+    AddNode(&info, "packet", checkptrptr, UNKNOWN); //add the pointer to out info linked list
 
     FireEvent(CHECK, info); //fire the event and supply a pointer to the info
 
@@ -350,22 +350,89 @@ int AbilityCheck(Entity* target, Skill prof, Stats score)
 
     //TODO need some system for rolling 1s. maybe just automatically return a 1, should have a game rule for if 1s auto-fail Ability Checks.
 
-    
+    finalroll += target->skills[checkptr->proficiency] * target->proficiency; //add the relevant proficiency bonus; the entity's "skills" array is 0 for neutral, 1 for proficiency, and 2 for expertise, so just multiply the proficiency bonus with this value
+    finalroll += GetModifier(target->stats[checkptr->abilityscore]); //add the relevant score modifier
 
     free(checkptr); //free our check packet before we go
     return finalroll;
 }
 
-void Attack(Entity* target, Entity* attacker)
+void Attack(Entity* target, Entity* attacker, int attackbonus, int damagebonus)
 {
     
 
     return;
 }
 
-void SavingThrow()
+int SavingThrow(Entity* target, Stats score)
 {
+    Saving_Throw_Pack* saveptr = malloc(sizeof(Saving_Throw_Pack));
 
+    saveptr->target = target;
+    saveptr->abilityscore = score;
 
-    return;
+    saveptr->advantages = 0;
+    saveptr->disadvantages = 0;
+    saveptr->additionalmodifier = 0;
+
+    node *info = NULL; //make out info linked-list
+    //we're making a pointer to a pointer so that we free the pointer when we free the list, instead of the struct which it points to
+    Saving_Throw_Pack** saveptrptr = malloc(sizeof(Saving_Throw_Pack*)); //allocate the pointer to the pointer
+    *saveptrptr = saveptr; //set the pointer to the packet we've made
+
+    AddNode(&info, "packet", saveptrptr, UNKNOWN);
+
+    FireEvent(SAVE, info); //fire the event and supply a pointer to the info
+
+    FreeList(info); //free info list after everything notified by the listener system has gotten to act on our packet
+
+    int finalroll;//initialize our roll
+    //this step gives us our unmodified dice roll. Can change based on selected game rule.
+    //"cancelling advantage" rules-as-written
+    if(RAWADVANTAGERULE)
+    {
+        //roll with advantage
+        if((saveptr->advantages > 0 && saveptr->disadvantages == 0))
+        {
+            finalroll = RollAdvantage(20);
+        }
+        //roll with disadvantage
+        else if((saveptr->advantages == 0 && saveptr->disadvantages > 0))
+        {
+            finalroll = RollDisadvantage(20);
+        }
+        //roll straight
+        else
+        {
+            finalroll = Roll(20);
+        }
+    }
+    //"duelling advantage" rule
+    else
+    {
+        int advantagedif = saveptr->advantages - saveptr->disadvantages;
+        //roll with advantage
+        if(advantagedif > 0)
+        {
+            finalroll = RollAdvantage(20);
+        }
+        //roll with disadvantage
+        else if(advantagedif < 0)
+        {
+            finalroll = RollDisadvantage(20);
+        }
+        //roll straight
+        else
+        {
+            finalroll = Roll(20);
+        }
+    }
+
+    finalroll += target->saveprofs[saveptr->abilityscore] * target->proficiency; //add the relevant proficiency bonus; the entity's "skills" array is 0 for neutral, 1 for proficiency, and 2 for expertise, so just multiply the proficiency bonus with this value
+    finalroll += GetModifier(target->stats[saveptr->abilityscore]); //add the relevant score modifier
+
+    free(saveptr); //free our check packet before we go
+    return finalroll;
 }
+
+

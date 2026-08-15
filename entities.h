@@ -2,7 +2,15 @@
 #define ENTITIES_H_
 
 #include "ability_system.h"
+#include "entities.h"
+#include "dice.h"
 #include "map2d.h"
+
+typedef enum{
+    MELEE,
+    RANGED,
+    MAGIC
+}Attack_Type;
 
 typedef enum{
     SLASHING,
@@ -133,6 +141,7 @@ typedef struct{
     Senses senses;
 
     Skill skills[SKILLS_NUMBER]; //TODO see prev
+    int saveprofs[STATS_NUMBER]; //TODO see prev
 
     Dice hitdice;
     Dice currenthitdice;
@@ -158,7 +167,7 @@ typedef struct{
     Creature* location;
 }Entity;
 
-//----- The following structs are packets that are created and destroyed by acertain actions and allow for event listeners to modify a single source before it's executed -----
+//----- The following structs are packets that are created and destroyed by certain actions and allow for event listeners to modify a single source before it's executed -----
 // listeners can modify these structs, with the final modified struct being used by the function, which then deletes it before returning
 
 typedef struct{
@@ -174,16 +183,28 @@ typedef struct{
 }Skill_Check_Pack;
 
 typedef struct{
-    Entity* target;
-    Entity* attacker;
+    Entity* target; //target of attack
+    Entity* attacker; //you get one guess
+    Stats basis; //the stat whose modifier is being used
+    Attack_Type type; //whether the attack is melee, ranged, or magic
 
+    int damagebonus; //bonus to damage
+
+    int advantages; //counts the number of things that are granting advantage
+    int disadvantages; //counts the number of things that are granting disadvantage
+
+    int additionalmodifier; //additional +/- to total, besides basic ability scores
 }Attack_Pack;
 
 typedef struct{
-    Entity* target;
-    Stats proficiency;
+    Entity* target; //target of check
+    Stats abilityscore; //ability score being used
 
-}Save_Pack;
+    int advantages; //counts the number of things that are granting advantage
+    int disadvantages; //counts the number of things that are granting disadvantage
+
+    int additionalmodifier; //additional +/- to total, besides basic ability scores
+}Saving_Throw_Pack;
 
 //returns default ability score used for each skill
 // if skill isn't added to this function the default return value is constitution, because no vanilla skill uses that and it should raise concern
@@ -218,8 +239,8 @@ void FreeEntity(Entity* entity);
 // score is the ability score being added (use "defaultskillscore[prof]" for the default of the proficiency)
 int AbilityCheck(Entity* target, Skill prof, Stats score);
 
-void Attack(Entity* target, Entity* attacker);
+void Attack(Entity* target, Entity* attacker, int attackbonus, int damagebonus);
 
-void SavingThrow();
+int SavingThrow(Entity* target, Stats score);
 
 #endif // ENTITIES_H_

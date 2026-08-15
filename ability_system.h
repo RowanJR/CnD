@@ -2,9 +2,10 @@
 #define ABILITY_SYSTEM_H_
 
 //events enum; all code scales automatically when a new event is added, as long as its inserted before EV_COUNT
-// if an event is added here, any ability can use Subscribe(event, &self) to be notified when that even fires
-// unique events like USE don't have subscriber lists, but can be fired on a specific ability instance on a specific entity
-// all abilities are sent to the respective target's abilities (if they have one), even if they're not subscribed
+// -if an event is added here, any ability can use Subscribe(event, &self) to be notified when that even fires
+// -unique events like USE don't have subscriber lists, but can be fired on a specific ability instance on a specific entity
+// -all abilities are sent to the respective target's abilities (if they have one), even if they're not subscribed
+// -many events supply a "packet" in info. This is a struct unique to the event that can be modified to apply the effects
 //TODO decide on actual information sent in each of these events. Ensure proper documentation and handling whenever sent. current documentation is placeholder
 typedef enum{
     TIMESTEP,       // tracks each turn passing outside of combat. Info contains nothing, caution when using, meant to preserve turn-by-turn action while not invoking abilities that don't matter outside combat.
