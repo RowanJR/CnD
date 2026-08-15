@@ -223,28 +223,24 @@ int RemoveAbility(void* abilfunctionptr, Entity* entity)
 
 void DealDamage(Damage_Types* damage, Entity* entity)
 {
-    for(int i = 0; i < TYPES_NUMBER; i++)
-    {
-        //vulnerable
-        if(entity->resistances[i] == -1)
-        {
-            entity->currentHP -= (2 * damage[i]);
-        }
-        //resistant
-        else if(entity->resistances[i] == 1)
-        {
-            entity->currentHP -= (damage[i] / 2);
-        }
-        //immune
-        else if(entity->resistances[i] == 2)
-        {
+    Damage_Pack* damptr = malloc(sizeof(Damage_Pack));
 
-        }
-        else
-        {
-            entity->currentHP -= damage[i];
-        }
-    }
+    damptr->damage = damage;
+    damptr->target = entity;
+
+    node *info = NULL;
+
+    Damage_Pack** damptrptr = malloc(sizeof(Damage_Pack*));
+
+    *damptrptr = damptr;
+
+    AddNode(&info, "packet", damptrptr, UNKNOWN); //add the pointer to out info linked list
+
+    FireEvent(CHECK, info); //fire the event and supply a pointer to the info
+
+    FreeList(info);
+
+    free(damptr);
     return;
 }  
 

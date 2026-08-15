@@ -20,8 +20,10 @@ void template(node* info, Event event, Ability* instance)
             break;
         case REPEAT:
 
-            break
+            break;
         case REMOVE:
+            FreeList(instance->variables);
+            free(instance);
 
             break;
         case GET_DATA:
@@ -35,7 +37,7 @@ void template(node* info, Event event, Ability* instance)
             destination = (node**)ListSearch(info, "dest");
             if(destination != NULL)
             {
-                AddNode(destination, "tag", "true", STR);
+                AddNode(destination, "tag", NULL, STR);
             }
             break;
         default:
@@ -80,7 +82,7 @@ void DEBUG_Test(node* info, Event event, Ability* instance)
             destination = (node***)ListSearch(info, "dest");
             if(destination != NULL)
             {
-                AddNode(*destination, "DEBUG", "true", STR);
+                AddNode(*destination, "DEBUG", "true", UNKNOWN);
             }
             break;
         default:
@@ -212,4 +214,46 @@ void Debug_Burning(node* info, Event event, Ability* instance)
     }
     return;
 }
+
+void DEBUG_Useable(node* info, Event event, Ability* instance)
+{
+    switch(event)
+    {
+        case INITIAL:
+            
+
+            break;
+        case REPEAT:
+
+            break;
+        case REMOVE:
+            FreeList(instance->variables);
+            free(instance);
+
+            break;
+        case USE:
+            printf("ability used\n");
+
+            break;            
+        case GET_DATA:
+            node** destination = (node**)ListSearch(info, "dest");
+            if(destination != NULL)
+            {
+                AddNode(destination, "name", "DEBUG_Useable", STR);
+                AddNode(*destination, "description", "DEBUG_Useable description", STR);
+            }
+            break;
+        case GET_TAGS:
+            destination = (node**)ListSearch(info, "dest");
+            if(destination != NULL)
+            {
+                AddNode(destination, "DEBUG", "true", UNKNOWN);
+                AddNode(destination, "usable", "true", UNKNOWN);
+            }
+            break;
+        default:
+            break;
+    }
+}
+
 

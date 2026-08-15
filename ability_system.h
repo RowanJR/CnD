@@ -15,6 +15,7 @@ typedef enum{
     ATTACK,         // used for different attack types; info contains a pointer to the Attack_Pack struct (see "entities.h"), the potential outcome of a successful attack, and whether the attack is melee/ranged/magic
     CHECK,          // used whenever an entity makes and ability check; info contains a pointer to the Skill_Check_Pack struct (see "entities.h"), and the check outcomes
     MOVED,          // used for whenever an entity moves; info contains the entity moving
+    DEAL_DAMAGE,    // used for when an affect deals damage; info contains the Damage_Pack struct (see "entities.h")
     MAGIC_ACTION,   // used for any magical action; info contains the entity attempting the magic, and the outcome of action success
     CHARACTERISTIC_CHANGE,  // used whenever an entity changes any characteristics; info contains the entity having it's characteristics changed, 
                             //and a list of the characteristics changed (format is a linked list with the name being the characteristic (dexterity, size, ability, etc.) and the varaible being a pointer to the instance) 

@@ -206,6 +206,11 @@ typedef struct{
     int additionalmodifier; //additional +/- to total, besides basic ability scores
 }Saving_Throw_Pack;
 
+typedef struct{
+    Entity* target;
+    Damage_Types* damage;
+}Damage_Pack;
+
 //returns default ability score used for each skill
 // if skill isn't added to this function the default return value is constitution, because no vanilla skill uses that and it should raise concern
 Stats GetDefaultSkillScore(Skill skill);
